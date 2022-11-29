@@ -16,15 +16,15 @@ class PostModel(models.Model):
     )
     userId = models.ForeignKey(UserModel, on_delete=models.CASCADE, db_column='userId',null=True, related_name='userId')
     imageId = models.IntegerField(blank=True)
+    price = models.BigIntegerField()
+    title = models.CharField(max_length=100)
+    content = models.CharField(max_length=1000)
     category = models.CharField(max_length=20)
     likeUsers = models.ManyToManyField(UserModel, related_name='likeUsers')
     heartOn = models.BooleanField(default=0)
     likeNumber = models.PositiveIntegerField(default=0)
-    price = models.BigIntegerField()
-    title = models.CharField(max_length=100)
-    content = models.CharField(max_length=1000)
+    watchNumber = models.PositiveIntegerField(default=0)
     createdAt = models.DateTimeField(default=timezone.now)
-    watch = models.IntegerField(default=0,blank=True)
 
     def __str__(self):
         return self
