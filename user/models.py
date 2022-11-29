@@ -34,7 +34,6 @@ class UserModel(AbstractUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
-
     profilePhoto = models.CharField(default=None, max_length=30)
     location = models.CharField(default=None, max_length=30)
 

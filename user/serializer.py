@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import UserModel
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.serializers import TokenVerifySerializer
+
 # Signup
 User = get_user_model()
 
@@ -62,7 +62,6 @@ class UserLoginSerializer(serializers.Serializer):
                 raise serializers.ValidationError({"msg":"틀린 비밀번호입니다."})
         else:
             raise serializers.ValidationError({"msg":"계정이 존재하지 않습니다."})
-        
         token = RefreshToken.for_user(user)
         refresh = str(token)
         access = str(token.access_token)

@@ -1,6 +1,7 @@
 from django.db import models
 from user.models import UserModel
 from django.utils import timezone
+
 # Create your models here.
 
 class PostImage(models.Model):
@@ -13,10 +14,12 @@ class PostModel(models.Model):
         primary_key=True,
         serialize=False,
     )
-    userId = models.ForeignKey(UserModel, on_delete=models.CASCADE, db_column='userId',null=True, related_name='user')
+    userId = models.ForeignKey(UserModel, on_delete=models.CASCADE, db_column='userId',null=True, related_name='userId')
     imageId = models.IntegerField(blank=True)
     category = models.CharField(max_length=20)
-    # postLikeId = models.ForeignKey(PostLike)
+    likeUsers = models.ManyToManyField(UserModel, related_name='likeUsers')
+    heartOn = models.BooleanField(default=0)
+    likeNumber = models.PositiveIntegerField(default=0)
     price = models.BigIntegerField()
     title = models.CharField(max_length=100)
     content = models.CharField(max_length=1000)
