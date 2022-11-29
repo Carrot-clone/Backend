@@ -7,4 +7,7 @@ class PostSerializer(serializers.ModelSerializer):
         model = PostModel
         fields = ['userId','username','imageId','category','price','title', 'content','createdAt','watch','likeNumber','heartOn']
 
-#class PostListSerializer(serializers.ModelSerializer):
+class PostListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostModel
+        fields = ['postId','imageId','price','title', 'createdAt','likeNumber']
