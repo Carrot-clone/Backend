@@ -1,6 +1,8 @@
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
+from rest_framework import generics
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from .serializer import PostSerializer, PostListSerializer
 from .models import PostModel
@@ -24,10 +26,20 @@ class PostCreateView(APIView):
         return Response(data={"msg":"게시글 작성에 실패하셨습니다.", "status":400},status=400)
 
 class PostListViewset(viewsets.ModelViewSet):
-    queryset = PostModel.objects.all()
+    queryset = PostModel.objects.all().order_by('-createdAt')
     serializer_class = PostListSerializer
     pagination_class = StandardResultsSetPagination
         
+class PostCategoryView(generics.ListAPIView):
+    serializer_class = PostListSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        queryset = PostModel.objects.all()
+        category = self.request.query_params.get('category',None)
+        if category is not None:
+            queryset = queryset.filter(category=category)
+        return queryset.order_by('-createdAt')
 
 class PostDetailView(APIView):
     def get_object(self, pk):
