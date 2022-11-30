@@ -1,5 +1,7 @@
 from .serializer import UserSignupSerializer, UserCheckSerializer, UserLoginSerializer
+from .models import UserModel
 from django.db import IntegrityError
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView, Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -34,11 +36,12 @@ class UserLoginView(APIView):
 
         if not serializer.is_valid(raise_exception=True):
             return Response({"msg": "로그인에 실패했습니다.","status" : 400}, status=status.HTTP_409_CONFLICT)
-
+        user = get_object_or_404(UserModel,email=serializer.validated_data['user'])
+        
         response = {
             "status": 200,
             "msg" : "로그인에 성공하셨습니다.",
-            "username" : str(serializer.validated_data['user']),
+            "username" : user.username,
             "accessToken": serializer.validated_data["access"], # 시리얼라이저에서 받은 토큰 전달
             "refreshToken" : serializer.validated_data["refresh"]
         }
