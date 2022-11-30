@@ -3,10 +3,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from .serializer import PostSerializer, PostListSerializer
-from .models import PostModel,UserModel
+from .models import PostModel
 from django.http import Http404
-from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from datetime import datetime, timedelta
 
 # Pagination
 class StandardResultsSetPagination(PageNumberPagination):
@@ -38,16 +38,27 @@ class PostDetailView(APIView):
    
     def get(self, request, pk):
         post = self.get_object(pk)
-        print(dir(request))
-        if request.user != post.userId:
-            post.watchNumber += 1
-            post.save()
         if request.user in post.likeUsers.all():
             post.heartOn = 1
             post.save()
         else:
             post.heartOn = 0
             post.save()
+
+        if request.user != post.userId:
+            expire, current = datetime.now(), datetime.now()
+            expire += timedelta(hours=5)
+            expire -= current
+            remain_time = expire.total_seconds()
+            cookie_value = request.COOKIES.get('watch','_')
+            serializer = PostSerializer(post)
+            response_ = Response(serializer.data)
+            if f'_{pk}_' not in cookie_value:
+                cookie_value += f'{pk}_'
+                response_.set_cookie('watch',value=cookie_value, max_age=remain_time, httponly=True)
+                post.watchNumber += 1
+                post.save()
+            return response_
         serializer = PostSerializer(post)
         return Response(serializer.data)
     
