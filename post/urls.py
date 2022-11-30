@@ -8,7 +8,7 @@ router.register(r'list', PostListViewset, basename= '')
 urlpatterns = [
     path('', PostCreateView.as_view()),
     path('', include(router.urls)),
-    re_path('^(?P<category>.+)/', PostCategoryView.as_view()),
+    re_path('category/', PostCategoryView.as_view()),
     path('<int:pk>/', PostDetailView.as_view()),
     path('<int:pk>/heart/', PostLikeView.as_view()),
 ]
