@@ -29,6 +29,9 @@ class PostListViewset(viewsets.ModelViewSet):
     queryset = PostModel.objects.all().order_by('-createdAt')
     serializer_class = PostListSerializer
     pagination_class = StandardResultsSetPagination
+
+    filter_backends = [SearchFilter]
+    search_fields = ('title',)
         
 class PostCategoryView(generics.ListAPIView):
     serializer_class = PostListSerializer
