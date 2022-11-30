@@ -19,7 +19,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 # Create your views here.
 class PostCreateView(APIView):
     def post(self,request):
-        serializer = PostSerializer(data=request.data)
+        serializer = PostSerializer(data=request.data, context={'request':request})
         if serializer.is_valid():
             serializer.save(userId=request.user)
             return Response(data={"msg":"게시글 작성에 성공하셨습니다.", "status":200},status=200)

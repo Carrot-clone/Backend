@@ -6,6 +6,9 @@ from django.utils.translation import gettext_lazy as _
 
 from .manager import UserManager
 
+def image_upload_path(instance,filename):
+    return f'profilePhoto/{instance.username}/{filename}'
+
 # Create your models here.
 class UserModel(AbstractUser):
     id = models.BigAutoField(
@@ -34,12 +37,11 @@ class UserModel(AbstractUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'username'
-    profilePhoto = models.CharField(default=None, max_length=30)
-    location = models.CharField(default=None, max_length=30)
+    profilePhoto = models.ImageField(upload_to=image_upload_path)
+    location = models.CharField(null=True, max_length=30)
 
     class Meta:
         verbose_name = _('user')
-        verbose_name_plural = _('user')
 
     def __str__(self):
         return self.email
