@@ -68,15 +68,17 @@ class PostDetailView(APIView):
         if post.userId == request.user:
             if serializer.is_valid():
                 serializer.save(userId=request.user)
-                return Response({"status" : 200, "msg": "게시글 수정에 성공하셨습니다."}, status=status.HTTP_202_ACCEPTED,)
-            return Response({"status" : 400, "msg": "게시글 수정에 실패하셨습니다."}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"status" : 200, "msg": "게시글 수정 성공"}, status=status.HTTP_202_ACCEPTED,)
+            return Response({"status" : 400, "msg": "게시글 수정 실패"}, status=status.HTTP_404_NOT_FOUND)
         else:
-            return Response({"status" : 400, "msg": "게시글 수정에 실패하셨습니다(작성유저와 수정유저가 불일치)"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"status" : 400, "msg": "게시글 수정 실패(작성유저와 수정유저가 불일치)"}, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         post = self.get_object(pk)
-        post.delete()
-        return Response({"status" : 200, "msg": "게시글 삭제에 성공하셨습니다."},status=status.HTTP_204_NO_CONTENT)
+        if post.userId == request.user:
+            post.delete()
+            return Response({"status" : 200, "msg": "게시글 삭제 성공"}, status=status.HTTP_204_NO_CONTENT,)
+        return Response({"status" : 404, "msg": "게시글 삭제 실패 (작성유저와 삭제유저 불일치)"},status=status.HTTP_400_BAD_REQUEST)
 
 class PostLikeView (APIView):
     def post(self, request, pk):
