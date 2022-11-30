@@ -10,8 +10,8 @@ class UserSignupSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True, max_length=50)
     username = serializers.CharField(required=True, max_length=30)
     password = serializers.CharField(required=True, write_only=True,style= {'input_type':'password'})
-    profilePhoto = serializers.CharField(required=False, default="Nonedata", max_length=30)
-    location = serializers.CharField(required=False,default="Nonedata", max_length=20)
+    profilePhoto = serializers.ImageField(use_url=True)
+    location = serializers.CharField(default='null',max_length=30)
 
     class Meta(object):
         model = UserModel
