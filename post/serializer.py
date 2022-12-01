@@ -22,15 +22,17 @@ class PostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         instance = PostModel.objects.create(**validated_data)
         image_set = self.context['request'].FILES
-        for image_data,x in zip(image_set.getlist('image'),range(len(image_set.getlist('image')))):
+        for image_data in image_set.getlist('image'):
             PostImage.objects.create(post_id=instance, image=image_data)
-            if x == 0:
-                instance.thumbImage = image_data
-                instance.save()
         return instance
 
 class PostListSerializer(serializers.ModelSerializer):
+    thumbImage = serializers.SerializerMethodField()
     class Meta:
         model = PostModel
         fields = ['postId','price','title', 'createdAt','likeNumber','thumbImage']
 
+    def get_thumbImage(self, object):
+        image = PostImage.objects.filter(post_id=object.postId)
+        print(dir(image[0].image))
+        return image[0].image.url

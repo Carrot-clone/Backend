@@ -1,8 +1,10 @@
 from django.db import models
 from user.models import UserModel
 from django.utils import timezone
+from datetime import datetime
 
 def image_upload_path(instance,filename):
+    t = datetime.datetime.now()
     return f'postImage/{instance.post_id.postId}/{filename}'
 # Create your models here.
 
@@ -22,7 +24,6 @@ class PostModel(models.Model):
     likeNumber = models.PositiveIntegerField(default=0)
     watchNumber = models.PositiveIntegerField(default=0)
     createdAt = models.DateTimeField(default=timezone.now)
-    thumbImage = models.ImageField()
 
     def __str__(self):
         return self
