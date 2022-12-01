@@ -3,11 +3,13 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from datetime import datetime
 
 from .manager import UserManager
 
 def image_upload_path(instance,filename):
-    return f'profilePhoto/{instance.username}/{filename}'
+    t = datetime.now()
+    return f'profilePhoto/{instance.username}/{t.day}_{t.hour}_{t.minute}_{t.microsecond}'
 
 # Create your models here.
 class UserModel(AbstractUser):
