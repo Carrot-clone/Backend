@@ -1,8 +1,9 @@
-from .serializer import PostSerializer, PostListSerializer
-from .models import PostModel, PostImage
-from datetime import datetime, timedelta
 from os import environ
 import boto3
+from .serializer import PostSerializer, PostListSerializer
+from .models import PostModel, PostImage
+from .pagination import CustomPagination
+from datetime import datetime, timedelta
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
@@ -10,7 +11,7 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
-from rest_framework.pagination import PageNumberPagination
+
 
 s3_client = boto3.client(
                 's3',
@@ -18,12 +19,6 @@ s3_client = boto3.client(
                 aws_secret_access_key = environ["AWS_SECRET_ACCESS_KEY"],
                 region_name='ap-northeast-2',
             )
-
-# Pagination
-class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 5
-    page_size_query_param = 'page_size'
-    max_page_size = 100
 
 # Create your views here.
 class PostCreateView(APIView):
@@ -37,14 +32,14 @@ class PostCreateView(APIView):
 class PostListViewset(viewsets.ModelViewSet):
     queryset = PostModel.objects.all().order_by('-createdAt')
     serializer_class = PostListSerializer
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
 
     filter_backends = [SearchFilter]
     search_fields = ('title',)
         
 class PostCategoryView(generics.ListAPIView):
     serializer_class = PostListSerializer
-    pagination_class = StandardResultsSetPagination
+    pagination_class = CustomPagination
 
     def get_queryset(self):
         queryset = PostModel.objects.all()
@@ -68,7 +63,12 @@ class PostDetailView(APIView):
         else:
             post.heartOn = 0
             post.save()
-
+        posts = PostModel.objects.filter(userId=post.userId)
+        others = []
+        for post_ in posts[:5]:
+            if post_.postId != post.postId:
+                tem_image = PostImage.objects.filter(post_id=post_.postId)
+                others.append({"thumbImage" : tem_image[0].image.url, "postId" : post_.postId, "title" : post_.title, "price" : post_.price})
         if request.user != post.userId:
             expire, current = datetime.now(), datetime.now()
             expire += timedelta(hours=5)
@@ -76,7 +76,7 @@ class PostDetailView(APIView):
             remain_time = expire.total_seconds()
             cookie_value = request.COOKIES.get('watch','_')
             serializer = PostSerializer(post)
-            response_ = Response(serializer.data)
+            response_ = Response({"mainPost":serializer.data,"otherPosts":others})
             if f'_{pk}_' not in cookie_value:
                 cookie_value += f'{pk}_'
                 response_.set_cookie('watch',value=cookie_value, max_age=remain_time, httponly=True)
@@ -84,7 +84,7 @@ class PostDetailView(APIView):
                 post.save()
             return response_
         serializer = PostSerializer(post)
-        return Response(serializer.data)
+        return Response({"mainPost":serializer.data,"otherPosts":others})
     
     def put(self, request, pk):
         post = self.get_object(pk)
