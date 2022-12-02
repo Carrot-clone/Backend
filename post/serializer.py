@@ -10,14 +10,15 @@ class PostImageSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='userId.username',read_only=True)
     images = serializers.SerializerMethodField()
+    otherPosts = serializers.ListField()
 
     def get_images(self, object):
         image = object.image.all()
         return PostImageSerializer(instance=image, many=True, context=self.context).data
-
+    
     class Meta:
         model = PostModel
-        fields = ['userId','username','images','category','price','title', 'content','createdAt','watchNumber','likeNumber','heartOn']
+        fields = ['userId','username','images','category','price','title', 'content','createdAt','watchNumber','likeNumber','heartOn','otherPosts']
     
     def create(self, validated_data):
         instance = PostModel.objects.create(**validated_data)
@@ -35,5 +36,4 @@ class PostListSerializer(serializers.ModelSerializer):
 
     def get_thumbImage(self, object):
         image = PostImage.objects.filter(post_id=object.postId)
-        print(dir(image[0].image))
         return image[0].image.url
