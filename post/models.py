@@ -4,7 +4,7 @@ from django.utils import timezone
 from datetime import datetime
 
 def image_upload_path(instance,filename):
-    t = datetime.datetime.now()
+    t = datetime.now()
     return f'postImage/{instance.post_id.postId}/{filename}'
 # Create your models here.
 

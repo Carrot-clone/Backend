@@ -25,6 +25,7 @@ class PostSerializer(serializers.ModelSerializer):
         for image_data in image_set.getlist('image'):
             PostImage.objects.create(post_id=instance, image=image_data)
         return instance
+    
 
 class PostListSerializer(serializers.ModelSerializer):
     thumbImage = serializers.SerializerMethodField()
