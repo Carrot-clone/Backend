@@ -63,7 +63,12 @@ class PostDetailView(APIView):
         else:
             post.heartOn = 0
             post.save()
-
+        posts = PostModel.objects.filter(userId=post.userId)
+        others = []
+        for post_ in posts[:5]:
+            if post_.postId != post.postId:
+                tem_image = PostImage.objects.filter(post_id=post_.postId)
+                others.append({"thumbImage" : tem_image[0].image.url, "postId" : post_.postId, "title" : post_.title, "price" : post_.price})
         if request.user != post.userId:
             expire, current = datetime.now(), datetime.now()
             expire += timedelta(hours=5)
@@ -71,16 +76,15 @@ class PostDetailView(APIView):
             remain_time = expire.total_seconds()
             cookie_value = request.COOKIES.get('watch','_')
             serializer = PostSerializer(post)
-            response_ = Response(serializer.data)
+            response_ = Response({"mainPost":serializer.data,"otherPosts":others})
             if f'_{pk}_' not in cookie_value:
                 cookie_value += f'{pk}_'
                 response_.set_cookie('watch',value=cookie_value, max_age=remain_time, httponly=True)
                 post.watchNumber += 1
                 post.save()
             return response_
-        posts = PostModel.objects.filter(userId=post.userId)
         serializer = PostSerializer(post)
-        return Response(serializer.data)
+        return Response({"mainPost":serializer.data,"otherPosts":others})
     
     def put(self, request, pk):
         post = self.get_object(pk)
