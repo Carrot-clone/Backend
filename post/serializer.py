@@ -10,7 +10,6 @@ class PostImageSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='userId.username',read_only=True)
     images = serializers.SerializerMethodField()
-    otherPosts = serializers.ListField()
 
     def get_images(self, object):
         image = object.image.all()
@@ -18,7 +17,7 @@ class PostSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = PostModel
-        fields = ['userId','username','images','category','price','title', 'content','createdAt','watchNumber','likeNumber','heartOn','otherPosts']
+        fields = ['userId','username','images','category','price','title', 'content','createdAt','watchNumber','likeNumber','heartOn']
     
     def create(self, validated_data):
         instance = PostModel.objects.create(**validated_data)
