@@ -9,3 +9,4 @@ drf-yasg==1.21.4
 psycopg2-binary==2.9.5
 pillow==9.3.0
 boto3==1.26.20
+uwsgi==2.0.21
