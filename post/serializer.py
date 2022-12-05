@@ -43,5 +43,8 @@ class PostListSerializer(serializers.ModelSerializer):
         fields = ['postId','price','title', 'createdAt','likeNumber','thumbImage']
 
     def get_thumbImage(self, object):
-        image = PostImage.objects.filter(post_id=object.postId)
-        return image[0].image.url
+        image = PostImage.objects.filter(post_id=object)
+        try:
+            return image[0].image.url
+        except:
+            return

@@ -10,4 +10,7 @@ class CustomPagination(PageNumberPagination):
     max_page_size = 100
 
     def get_paginated_response(self, data):
-        return Response(OrderedDict([('result',data)]))
+        if self.get_next_link() == None:
+            return Response(OrderedDict([('results',data), ('final',1)]))
+        else:
+            return Response(OrderedDict([('results',data), ('final',0)]))
