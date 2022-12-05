@@ -14,7 +14,7 @@ class PostSerializer(serializers.ModelSerializer):
     def get_images(self, object):
         image = object.image.all()
         return PostImageSerializer(instance=image, many=True, context=self.context).data
-
+    
     class Meta:
         model = PostModel
         fields = ['userId','username','images','category','price','title', 'content','createdAt','watchNumber','likeNumber','heartOn']
@@ -25,6 +25,7 @@ class PostSerializer(serializers.ModelSerializer):
         for image_data in image_set.getlist('image'):
             PostImage.objects.create(post_id=instance, image=image_data)
         return instance
+    
 
 class PostListSerializer(serializers.ModelSerializer):
     thumbImage = serializers.SerializerMethodField()
@@ -34,5 +35,4 @@ class PostListSerializer(serializers.ModelSerializer):
 
     def get_thumbImage(self, object):
         image = PostImage.objects.filter(post_id=object.postId)
-        print(dir(image[0].image))
         return image[0].image.url

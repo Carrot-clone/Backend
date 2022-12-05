@@ -28,10 +28,6 @@ class UserSignupSerializer(serializers.ModelSerializer):
         email = data.get('email', None)
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError({"msg": "이미 존재하는 이메일입니다.", "status":200})
-        username = data.get('username', None)
-
-        if User.objects.filter(username=username).exists():
-            raise serializers.ValidationError({"msg": "이미 존재하는 사용자 이름입니다."})
         return data
 
 class UserCheckSerializer(serializers.ModelSerializer):
@@ -43,6 +39,7 @@ class UserCheckSerializer(serializers.ModelSerializer):
         email = data.get('email', None)
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError({"msg":"이미 존재하는 이메일입니다.","status":200})
+        return data
 
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True, write_only=True, max_length=20)
