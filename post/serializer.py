@@ -25,6 +25,15 @@ class PostSerializer(serializers.ModelSerializer):
         for image_data in image_set.getlist('image'):
             PostImage.objects.create(post_id=instance, image=image_data)
         return instance
+
+    def update(self, instance, validated_data):
+        instance = PostModel.objects.update(**validated_data)
+        image_set = self.context['request'].FILES
+        post = PostModel.objects.get(postId=instance)
+        PostImage.objects.filter(post_id=post).delete()
+        for image_data in image_set.getlist('image'):
+            PostImage.objects.create(post_id=post, image=image_data)
+        return instance
     
 
 class PostListSerializer(serializers.ModelSerializer):

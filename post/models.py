@@ -5,7 +5,7 @@ from datetime import datetime
 
 def image_upload_path(instance,filename):
     t = datetime.now()
-    return f'postImage/{instance.post_id.postId}/{filename}'
+    return f'postImage/{instance.post_id.postId}/{t.second}_{t.microsecond}_{filename}'
 # Create your models here.
 
 class PostModel(models.Model):
