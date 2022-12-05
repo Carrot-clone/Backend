@@ -68,7 +68,10 @@ class PostDetailView(APIView):
         for post_ in posts[:5]:
             if post_.postId != post.postId:
                 tem_image = PostImage.objects.filter(post_id=post_.postId)
-                others.append({"thumbImage" : tem_image[0].image.url, "postId" : post_.postId, "title" : post_.title, "price" : post_.price})
+                try:
+                    others.append({"thumbImage" : tem_image[0].image.url, "postId" : post_.postId, "title" : post_.title, "price" : post_.price})
+                except IndexError:
+                    pass
         if request.user != post.userId:
             expire, current = datetime.now(), datetime.now()
             expire += timedelta(hours=5)
@@ -89,11 +92,6 @@ class PostDetailView(APIView):
     def put(self, request, pk):
         post = self.get_object(pk)
         if post.userId == request.user:
-            images = PostImage.objects.filter(post_id=post.postId)
-            for image in images:
-                target = image.image
-                key = f'{target}'
-                s3_client.delete_object(Bucket='melon-market-bucket',Key=key)
             serializer = PostSerializer(post, data=request.data, context={'request':request})
             if serializer.is_valid():
                 serializer.save(userId=request.user)
