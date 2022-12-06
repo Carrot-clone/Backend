@@ -17,16 +17,16 @@ class UserSignupView (APIView):
             if serializer.is_valid(raise_exception=True):
                 user = serializer.save(request)
                 RefreshToken.for_user(user)
-                return Response({"msg" : ["회원가입에 성공하셨습니다"], "status" : 201}, status=201)
+                return Response({"msg" : "회원가입에 성공하셨습니다", "status" : 201}, status=201)
         except IntegrityError:
-            return Response({"msg" : ["회원가입에 실패하셨습니다"], "status" : 202})
+            return Response({"msg" : "회원가입에 실패하셨습니다", "status" : 202})
 
 class UserCheckView (APIView):
     permission_classes = [AllowAny]
     def post(self, request):
         serializer = UserCheckSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            return Response({"msg":["사용 가능한 이메일입니다"], "status":200})
+            return Response({"msg":"사용 가능한 이메일입니다", "status":200})
 
 
 class UserLoginView(APIView):
