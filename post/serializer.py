@@ -27,12 +27,15 @@ class PostSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        instance = PostModel.objects.update(**validated_data)
+        instance.category = validated_data.get('category',instance.category)
+        instance.price = validated_data.get('price',instance.price)
+        instance.title = validated_data.get('title',instance.title)
+        instance.content = validated_data.get('content',instance.content)
+        instance.save()
         image_set = self.context['request'].FILES
-        post = PostModel.objects.get(postId=instance)
-        PostImage.objects.filter(post_id=post).delete()
+        PostImage.objects.filter(post_id=instance).delete()
         for image_data in image_set.getlist('image'):
-            PostImage.objects.create(post_id=post, image=image_data)
+            PostImage.objects.create(post_id=instance, image=image_data)
         return instance
     
 
