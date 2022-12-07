@@ -26,8 +26,8 @@ class PostCreateView(APIView):
         serializer = PostSerializer(data=request.data, context={'request':request})
         if serializer.is_valid():
             serializer.save(userId=request.user)
-            return Response(data={"msg":"게시글 작성에 성공하셨습니다.", "status":200},status=200)
-        return Response(data={"msg":"게시글 작성에 실패하셨습니다.", "status":400},status=400)
+            return Response(data={"msg":"게시글 작성에 성공하셨습니다.", "status":200},status=status.HTTP_201_CREATED)
+        return Response(data={"msg":"게시글 작성에 실패하셨습니다.", "status":400},status=status.HTTP_400_BAD_REQUEST)
 
 class PostListViewset(viewsets.ModelViewSet):
     queryset = PostModel.objects.all().order_by('-createdAt')
@@ -87,7 +87,7 @@ class PostDetailView(APIView):
                 post.save()
             return response_
         serializer = PostSerializer(post)
-        return Response({"mainPost":serializer.data,"otherPosts":others})
+        return Response({"mainPost":serializer.data,"otherPosts":others},status=status.HTTP_202_ACCEPTED)
     
     def put(self, request, pk):
         post = self.get_object(pk)
@@ -123,4 +123,4 @@ class PostLikeView (APIView):
             post.likeUsers.add(request.user)
             post.likeNumber += 1
             post.save()
-        return Response({"msg":"성공"})
+        return Response({"msg":"성공"},status=status.HTTP_202_ACCEPTED)
