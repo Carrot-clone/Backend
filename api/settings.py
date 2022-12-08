@@ -29,8 +29,7 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -52,7 +51,7 @@ INSTALLED_APPS = [
     "storages",
     "corsheaders",
     "user",
-    "post"
+    "post",
 ]
 
 MIDDLEWARE = [
@@ -63,7 +62,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware"
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "api.urls"
@@ -90,13 +89,13 @@ WSGI_APPLICATION = "api.wsgi.application"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ["RDS_NAME"],
-        'USER': os.environ["RDS_USER"],
-        'PASSWORD': os.environ["RDS_PWD"],
-        'HOST': os.environ["RDS_HOST"],
-        'PORT': 3306,
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.environ["RDS_NAME"],
+        "USER": os.environ["RDS_USER"],
+        "PASSWORD": os.environ["RDS_PWD"],
+        "HOST": os.environ["RDS_HOST"],
+        "PORT": 3306,
     }
 }
 
@@ -119,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'user.UserModel'
+AUTH_USER_MODEL = "user.UserModel"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
@@ -139,52 +138,50 @@ CORS_ORIGIN_WHITELIST = (
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000",
 )
 CORS_ALLOW_METHODS = (
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
 )
 
 # DRF
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES' : (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
 
 SITE_ID = 1
 REST_USE_JWT = True
-JWT_AUTH_COOKIE = 'my-app-auth'
-JWT_AUTH_REFRESH_COOKIE = 'my-refresh-token'
+JWT_AUTH_COOKIE = "my-app-auth"
+JWT_AUTH_REFRESH_COOKIE = "my-refresh-token"
 
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = "username"
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'email'
+ACCOUNT_EMAIL_VERIFICATION = "email"
 
 # AWS
 AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY"]
 AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
-AWS_REGION = 'ap-northeast-2'
+AWS_REGION = "ap-northeast-2"
 
 # AWS S3
-AWS_STORAGE_BUCKET_NAME = 'melon-market-bucket'
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com'
+AWS_STORAGE_BUCKET_NAME = "melon-market-bucket"
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com"
 AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
+    "CacheControl": "max-age=86400",
 }
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'path/to/store/my/files/')
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+MEDIA_ROOT = os.path.join(BASE_DIR, "path/to/store/my/files/")
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -197,15 +194,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Simple JWT
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': True,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-    'VERIFYING_KEY': None,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-    'TOKEN_TYPE_CLAIM': 'token_type',
-    'TOKEN_USER_CLASS' : 'user.User',
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    "VERIFYING_KEY": None,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
+    "TOKEN_USER_CLASS": "user.User",
 }
