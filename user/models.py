@@ -3,7 +3,6 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from datetime import datetime
-
 from .manager import UserManager
 
 
@@ -39,7 +38,7 @@ class UserModel(AbstractUser):
     objects = UserManager()
 
     USERNAME_FIELD = "username"
-    profilePhoto = models.ImageField(upload_to=image_upload_path)
+    profilePhoto = models.ImageField(upload_to=image_upload_path, null=True, blank=True)
     location = models.CharField(null=True, max_length=30)
 
     class Meta:

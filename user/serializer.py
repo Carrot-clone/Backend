@@ -13,7 +13,7 @@ class UserSignupSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         required=True, write_only=True, style={"input_type": "password"}
     )
-    profilePhoto = serializers.ImageField(use_url=True)
+    profilePhoto = serializers.ImageField(required=False,use_url=True)
     location = serializers.CharField(default="null", max_length=30)
 
     class Meta(object):

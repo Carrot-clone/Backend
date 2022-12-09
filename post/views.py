@@ -106,7 +106,7 @@ class PostDetailView(APIView):
         serializer = PostSerializer(post)
         return Response(
             {"mainPost": serializer.data, "otherPosts": others},
-            status=status.HTTP_202_ACCEPTED,
+            status=status.HTTP_200_OK,
         )
 
     def put(self, request, pk):
@@ -118,15 +118,15 @@ class PostDetailView(APIView):
             if serializer.is_valid():
                 serializer.save(userId=request.user)
                 return Response(
-                    {"status": 200, "msg": "게시글 수정 성공"},
+                    {"msg": "게시글 수정 성공"},
                     status=status.HTTP_202_ACCEPTED,
                 )
             return Response(
-                {"status": 400, "msg": "게시글 수정 실패"}, status=status.HTTP_404_NOT_FOUND
+                {"msg": "게시글 수정 실패"}, status=status.HTTP_404_NOT_FOUND
             )
         else:
             return Response(
-                {"status": 400, "msg": "게시글 수정 실패(작성유저와 수정유저가 불일치)"},
+                {"msg": "게시글 수정 실패(작성유저와 수정유저가 불일치)"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -140,11 +140,11 @@ class PostDetailView(APIView):
                 s3_client.delete_object(Bucket="melon-market-bucket", Key=key)
             post.delete()
             return Response(
-                {"status": 200, "msg": "게시글 삭제 성공"},
-                status=status.HTTP_204_NO_CONTENT,
+                {"msg": "게시글 삭제 성공"},
+                status=status.HTTP_200_OK,
             )
         return Response(
-            {"status": 404, "msg": "게시글 삭제 실패 (작성유저와 삭제유저 불일치)"},
+            {"msg": "게시글 삭제 실패 (작성유저와 삭제유저 불일치)"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -160,4 +160,4 @@ class PostLikeView(APIView):
             post.likeUsers.add(request.user)
             post.likeNumber += 1
             post.save()
-        return Response({"msg": "성공"}, status=status.HTTP_202_ACCEPTED)
+        return Response({"msg": "성공"}, status=status.HTTP_204_NO_CONTENT)
