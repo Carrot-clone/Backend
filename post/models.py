@@ -31,6 +31,7 @@ class PostModel(models.Model):
     category = models.CharField(max_length=20)
     likeUsers = models.ManyToManyField(UserModel, related_name="likeUsers")
     heartOn = models.BooleanField(default=0)
+    myPost = models.BooleanField(default=0)
     likeNumber = models.PositiveIntegerField(default=0)
     watchNumber = models.PositiveIntegerField(default=0)
     createdAt = models.DateTimeField(default=timezone.now)

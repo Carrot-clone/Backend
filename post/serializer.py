@@ -12,7 +12,9 @@ class PostImageSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="userId.username", read_only=True)
+    profilePhoto = serializers.ImageField(source="userId.profilePhoto", read_only=True)
     images = serializers.SerializerMethodField()
+    myPost = serializers.BooleanField(default=0)
 
     def get_images(self, object):
         image = object.image.all()
@@ -23,6 +25,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = [
             "userId",
             "username",
+            "profilePhoto",
             "images",
             "category",
             "price",
@@ -32,6 +35,7 @@ class PostSerializer(serializers.ModelSerializer):
             "watchNumber",
             "likeNumber",
             "heartOn",
+            "myPost"
         ]
 
     def create(self, validated_data):
@@ -64,6 +68,6 @@ class PostListSerializer(serializers.ModelSerializer):
     def get_thumbImage(self, object):
         image = PostImage.objects.filter(post_id=object)
         try:
-            return image[1].image.url
+            return image[0].image.url
         except:
             return

@@ -65,6 +65,7 @@ class PostDetailView(APIView):
 
     def get(self, request, pk):
         post = self.get_object(pk)
+        post.myPost = (request.user == post.userId)
         if request.user in post.likeUsers.all():
             post.heartOn = 1
             post.save()
