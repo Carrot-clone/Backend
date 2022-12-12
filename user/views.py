@@ -12,7 +12,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 class UserSignupView(APIView):
     permission_classes = [AllowAny]
-
     def post(self, request):
         try:
             serializer = UserSignupSerializer(data=request.data)
@@ -43,7 +42,6 @@ class UserCheckView(APIView):
 
 class UserLoginView(APIView):
     permission_classes = [AllowAny]
-
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
 

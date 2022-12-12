@@ -57,6 +57,7 @@ class TestView(APITestCase):
         )
         self.token = res.data['accessToken']
     
+    # 회원가입
     def test_user_signup(self):
         url = '/api/user/signup/'
         res = self.client.post(
@@ -68,3 +69,26 @@ class TestView(APITestCase):
             }),
             content_type="application/json")
         assert res.status_code == 202
+
+    # 이메일 체크
+    def test_user_check(self):
+        url_check = '/api/user/check/'
+        res_check = self.client.post(
+            url_check,
+            json.dumps({
+            "email":"test@test.com",
+            }),
+            content_type="application/json")
+        assert res_check.status_code == 400
+
+    # 로그인
+    def test_user_login(self):
+        url = '/api/user/signin/'
+        res = self.client.post(
+            url,
+            json.dumps({
+            "email":"test@test.com",
+            "password": "password"
+            }),
+            content_type="application/json")
+        assert res.status_code == 200
