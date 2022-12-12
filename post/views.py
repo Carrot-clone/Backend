@@ -1,9 +1,6 @@
 from os import environ
-import boto3
-from .serializer import PostSerializer, PostListSerializer
-from .models import PostModel, PostImage
-from .pagination import CustomPagination
 from datetime import datetime, timedelta
+import boto3
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
@@ -11,6 +8,9 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
+from .serializer import PostSerializer, PostListSerializer
+from .models import PostModel, PostImage
+from .pagination import CustomPagination
 
 s3_client = boto3.client(
     "s3",
@@ -21,6 +21,9 @@ s3_client = boto3.client(
 
 # Create your views here.
 class PostCreateView(APIView):
+    '''
+    A view for creating a post
+    '''
     def post(self, request):
         serializer = PostSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
@@ -36,6 +39,9 @@ class PostCreateView(APIView):
 
 
 class PostListViewset(viewsets.ModelViewSet):
+    '''
+    A view for reading some posts in lists
+    '''
     queryset = PostModel.objects.all().order_by("-createdAt")
     serializer_class = PostListSerializer
     pagination_class = CustomPagination
@@ -45,6 +51,9 @@ class PostListViewset(viewsets.ModelViewSet):
 
 
 class PostCategoryView(generics.ListAPIView):
+    '''
+    A view for categorized searching posts
+    '''
     serializer_class = PostListSerializer
     pagination_class = CustomPagination
 
@@ -57,6 +66,9 @@ class PostCategoryView(generics.ListAPIView):
 
 
 class PostDetailView(APIView):
+    '''
+    A view for reading a post
+    '''
     def get_object(self, pk):
         try:
             return PostModel.objects.get(pk=pk)
@@ -65,7 +77,7 @@ class PostDetailView(APIView):
 
     def get(self, request, pk):
         post = self.get_object(pk)
-        post.myPost = (request.user == post.userId)
+        post.myPost = request.user == post.userId
         if request.user in post.likeUsers.all():
             post.heartOn = 1
             post.save()
@@ -122,9 +134,7 @@ class PostDetailView(APIView):
                     {"msg": "게시글 수정 성공"},
                     status=status.HTTP_202_ACCEPTED,
                 )
-            return Response(
-                {"msg": "게시글 수정 실패"}, status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"msg": "게시글 수정 실패"}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response(
                 {"msg": "게시글 수정 실패(작성유저와 수정유저가 불일치)"},
@@ -151,6 +161,9 @@ class PostDetailView(APIView):
 
 
 class PostLikeView(APIView):
+    '''
+    A view for a fuction of like
+    '''
     def post(self, request, pk):
         post = get_object_or_404(PostModel, pk=pk)
         if request.user in post.likeUsers.all():

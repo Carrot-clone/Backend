@@ -1,3 +1,5 @@
+from django.urls import path, include, re_path
+from rest_framework import routers
 from .views import (
     PostCreateView,
     PostListViewset,
@@ -5,8 +7,6 @@ from .views import (
     PostDetailView,
     PostLikeView,
 )
-from django.urls import path, include, re_path
-from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r"list", PostListViewset, basename="")

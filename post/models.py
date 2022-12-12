@@ -1,18 +1,29 @@
-from django.db import models
-from user.models import UserModel
-from django.utils import timezone
+'''
+Some model structures of the post and it's images
+'''
 from datetime import datetime
+from django.db import models
+from django.utils import timezone
+from user.models import UserModel
 
 
 def image_upload_path(instance, filename):
-    t = datetime.now()
-    return f"postImage/{instance.post_id.postId}/{t.second}_{t.microsecond}_{filename}"
+    '''
+    A function of handling one or many images
+    The filename adjusted to keep unique
+    '''
+    time = datetime.now()
+    return f"postImage/{instance.post_id.postId}/{time.second}_{time.microsecond}_{filename}"
 
 
 # Create your models here.
 
 
 class PostModel(models.Model):
+    '''
+    A model of a post
+    '''
+    objects = models.Manager()
     postId = models.BigAutoField(
         auto_created=True,
         primary_key=True,
@@ -41,6 +52,10 @@ class PostModel(models.Model):
 
 
 class PostImage(models.Model):
+    '''
+    A model of images of a post
+    '''
+    objects = models.Manager()
     id = models.BigAutoField(primary_key=True)
     post_id = models.ForeignKey(
         PostModel, on_delete=models.CASCADE, related_name="image"
