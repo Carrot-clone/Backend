@@ -11,7 +11,7 @@ def making_and_checking_dummy_post(url, token, response):
             "title": "This is test title",
             "content": "Test content",
             "price" : 50000,
-            "category" : "hot",
+            "category" : "test",
             "image" : "2.png"
         }),
         content_type="application/json",
@@ -92,12 +92,38 @@ class TestView(APITestCase):
     def test_post_get_Detail_Exist(self):
         url = "/api/post/"
         making_and_checking_dummy_post(url,self.token,self)
-        url_get = "/api/post/1/"
+        url_get = "/api/post/2/"
         http_author = 'Bearer {}'.format(self.token)
         res = self.client.get(
             url_get, {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
         )
         assert res.status_code == 200
+
+    # 페이지 상세 페이지 수정 (성공)
+    def test_post_put_Detail_Exist(self):
+        url = "/api/post/"
+        making_and_checking_dummy_post(url,self.token,self)
+        url_put = "/api/post/7/"
+        http_author = 'Bearer {}'.format(self.token)
+        res_put = self.client.put(
+            url_put,
+            json.dumps({
+            "title": "This is modified title",
+            "content": "UPDATED",
+            "price" : 50000,
+            "category" : "test",
+            "image" : "2.png",
+            "image" : "2.png"
+            }),
+            content_type="application/json",
+            HTTP_AUTHORIZATION=http_author
+        )
+        res_get = self.client.get(
+            url_put, {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
+        )
+        assert res_put.status_code == 202
+        assert res_get.data["mainPost"]["content"] == "UPDATED"
+
 
     # 메인 페이지 리스트 조회 (글 있음)
     def test_post_get_list_success(self):
@@ -111,3 +137,40 @@ class TestView(APITestCase):
         )
         assert res_get.status_code == 200
         assert res_get.data['results'] != []
+
+    # 카테고리 조회
+    def test_post_get_category(self):
+        url_post = "/api/post/"
+        making_and_checking_dummy_post(url_post,self.token,self)
+        http_author = 'Bearer {}'.format(self.token)
+
+        url = "/api/post/category/list/?page=1&category=test"
+        res_get = self.client.get(
+            url, {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
+        )
+        assert res_get.status_code == 200
+        assert res_get.data['results'] != []
+
+    # 검색 기능 조회
+    def test_post_get_search(self):
+        url_post = "/api/post/"
+        making_and_checking_dummy_post(url_post,self.token,self)
+        http_author = 'Bearer {}'.format(self.token)
+
+        url = "/api/post/list/?page=1&search=test"
+        res_get = self.client.get(
+            url, {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
+        )
+        assert res_get.status_code == 200
+        assert res_get.data['results'] != []
+    
+    # 페이지 상세 페이지 삭제 (성공)
+    def test_post_delete_Detail_Exist(self):
+        url = "/api/post/"
+        making_and_checking_dummy_post(url,self.token,self)
+        url_delete = "/api/post/1/"
+        http_author = 'Bearer {}'.format(self.token)
+        res = self.client.delete(
+            url_delete, {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
+        )
+        assert res.status_code == 200
