@@ -20,6 +20,7 @@ from django.urls import path, re_path, include
 from rest_framework.permissions import AllowAny
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from post.views import PostCreateView
 
 schema_url_patterns = [
     path("api/user/", include("user.urls")),
@@ -41,6 +42,7 @@ schema_view_v1 = get_schema_view(
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/user/", include("user.urls")),
+    path("api/post", PostCreateView.as_view()),
     path("api/post/", include("post.urls")),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
