@@ -45,7 +45,6 @@ class PostListViewset(viewsets.ModelViewSet):
     queryset = PostModel.objects.all().order_by("-createdAt")
     serializer_class = PostListSerializer
     pagination_class = CustomPagination
-
     filter_backends = [SearchFilter]
     search_fields = ("title",)
 
