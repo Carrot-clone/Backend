@@ -49,6 +49,7 @@ class UserLoginView(APIView):
     A view for user's log-in
     '''
     permission_classes = [AllowAny]
+    authentication_classes = []
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
 
