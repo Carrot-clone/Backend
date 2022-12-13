@@ -29,11 +29,11 @@ class PostCreateView(APIView):
         if serializer.is_valid():
             serializer.save(userId=request.user)
             return Response(
-                data={"msg": "게시글 작성에 성공하셨습니다.", "status": 200},
+                data={"msg": "게시글 작성에 성공하셨습니다."},
                 status=status.HTTP_201_CREATED,
             )
         return Response(
-            data={"msg": "게시글 작성에 실패하셨습니다.", "status": 400},
+            data={"msg": "게시글 작성에 실패하셨습니다."},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
