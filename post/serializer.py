@@ -1,26 +1,44 @@
+'''
+Some serializers of the post and it's images
+'''
 from rest_framework import serializers
 from .models import PostModel, PostImage
 
 
 class PostImageSerializer(serializers.ModelSerializer):
+    '''
+    A serializer for handling some images
+    '''
     image = serializers.ImageField(use_url=True)
 
     class Meta:
+        '''
+        PostImageSerializer's Meta-class
+        '''
         model = PostImage
         fields = ["image"]
 
 
 class PostSerializer(serializers.ModelSerializer):
+    '''
+    A serializer for the basic post
+    '''
     username = serializers.CharField(source="userId.username", read_only=True)
     profilePhoto = serializers.ImageField(source="userId.profilePhoto", read_only=True)
     images = serializers.SerializerMethodField()
     myPost = serializers.BooleanField(default=0)
 
     def get_images(self, object):
+        '''
+        A fuction of getting multiple images
+        '''
         image = object.image.all()
         return PostImageSerializer(instance=image, many=True, context=self.context).data
 
     class Meta:
+        '''
+        PostSerializer's Meta-class
+        '''
         model = PostModel
         fields = [
             "userId",
@@ -39,6 +57,9 @@ class PostSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        '''
+        Creating post with mapping and seperating images
+        '''
         instance = PostModel.objects.create(**validated_data)
         image_set = self.context["request"].FILES
         for image_data in image_set.getlist("image"):
@@ -46,6 +67,9 @@ class PostSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
+        '''
+        Updating post with new images
+        '''
         instance.category = validated_data.get("category", instance.category)
         instance.price = validated_data.get("price", instance.price)
         instance.title = validated_data.get("title", instance.title)
@@ -59,13 +83,22 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class PostListSerializer(serializers.ModelSerializer):
+    '''
+    A serializer for paginated lists
+    '''
     thumbImage = serializers.SerializerMethodField()
 
     class Meta:
+        '''
+        PostListSerializer's Meta-class
+        '''
         model = PostModel
         fields = ["postId", "price", "title", "createdAt", "likeNumber", "thumbImage"]
 
     def get_thumbImage(self, object):
+        '''
+        Extracting the first image of images
+        '''
         image = PostImage.objects.filter(post_id=object)
         try:
             return image[0].image.url

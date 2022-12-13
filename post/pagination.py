@@ -1,6 +1,6 @@
+from collections import OrderedDict
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-from collections import OrderedDict
 
 
 class CustomPagination(PageNumberPagination):
@@ -11,5 +11,4 @@ class CustomPagination(PageNumberPagination):
     def get_paginated_response(self, data):
         if self.get_next_link() is None:
             return Response(OrderedDict([("results", data), ("final", 1)]))
-        else:
-            return Response(OrderedDict([("results", data), ("final", 0)]))
+        return Response(OrderedDict([("results", data), ("final", 0)]))

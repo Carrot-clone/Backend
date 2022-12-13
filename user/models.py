@@ -7,14 +7,20 @@ from .manager import UserManager
 
 
 def image_upload_path(instance, filename):
-    t = datetime.now()
+    '''
+    A function of handling a photo of profile
+    '''
+    time = datetime.now()
     return (
-        f"profilePhoto/{instance.username}/{t.day}_{t.hour}_{t.minute}_{t.microsecond}"
+        f"profilePhoto/{instance.username}/{time.day}_{time.hour}_{time.minute}_{time.microsecond}"
     )
 
 
 # Create your models here.
 class UserModel(AbstractUser):
+    '''
+    Basic the model of user
+    '''
     id = models.BigAutoField(unique=True, primary_key=True)
     username = models.CharField(
         unique=True,
@@ -42,6 +48,9 @@ class UserModel(AbstractUser):
     location = models.CharField(null=True, max_length=30)
 
     class Meta:
+        '''
+        User's model of Meta-class
+        '''
         verbose_name = _("user")
 
     def __str__(self):
