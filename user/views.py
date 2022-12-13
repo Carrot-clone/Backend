@@ -15,6 +15,8 @@ class UserSignupView(APIView):
     A view for signing-up an user
     '''
     permission_classes = [AllowAny]
+    authentication_classes = []
+
     def post(self, request):
         try:
             serializer = UserSignupSerializer(data=request.data)
@@ -34,6 +36,7 @@ class UserCheckView(APIView):
     A view for checking email to prevent from duplication
     '''
     permission_classes = [AllowAny]
+    authentication_classes = []
 
     def post(self, request):
         serializer = UserCheckSerializer(data=request.data)
@@ -50,18 +53,18 @@ class UserLoginView(APIView):
     '''
     permission_classes = [AllowAny]
     authentication_classes = []
+    
     def post(self, request):
         serializer = UserLoginSerializer(data=request.data)
 
         if not serializer.is_valid(raise_exception=True):
             return Response(
-                {"msg": "로그인에 실패했습니다.", "status": 400},
+                {"msg": "로그인에 실패했습니다."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user = get_object_or_404(UserModel, email=serializer.validated_data["user"])
 
         response = {
-            "status": 200,
             "msg": "로그인에 성공하셨습니다.",
             "username": user.username,
             "accessToken": serializer.validated_data["access"],  # 시리얼라이저에서 받은 토큰 전달
