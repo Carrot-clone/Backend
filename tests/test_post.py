@@ -89,13 +89,20 @@ class TestView(APITestCase):
         assert res.status_code == 200
         assert res.data["results"] == []
 
-    # 페이지 제작
+    # 페이지 제작 및 좋아요
     def test_post_make(self):
         '''
         Checking a function of create
         '''
         url = "/api/post/"
         making_and_checking_dummy_post(url, self.token, self)
+        url_heart = "/api/post/6/heart/"
+        http_author = f"Bearer {self.token}"
+        res = self.client.post(
+            url_heart, {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
+        )
+        assert res.status_code == 204
+        
 
     # 페이지 상세 페이지 조회 (성공)
     def test_post_get_detail(self):
