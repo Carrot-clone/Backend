@@ -44,7 +44,7 @@ jobs:
 
     - name: Run test and coverage
       run: |
-        pytest --cov-report term --cov .
+        pytest --cov-report term --cov
     
     - name: Publish code coverage
       uses: paambaati/codeclimate-action@v3.0.0
