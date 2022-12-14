@@ -25,6 +25,8 @@ class PostCreateView(APIView):
     A view for creating a post
     '''
     def post(self, request):
+        if 'multipart/form-data' not in request.content_type[:30]:
+            return Response(data={"msg": "Content-type이 일치하지 않습니다"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = PostSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save(userId=request.user)
@@ -98,6 +100,14 @@ class PostDetailView(APIView):
                         }
                     )
                 except IndexError:
+                    others.append(
+                        {
+                            "thumbImage": None,
+                            "postId": post_.postId,
+                            "title": post_.title,
+                            "price": post_.price,
+                        }
+                    )
                     pass
         if request.user != post.userId:
             expire, current = datetime.now(), datetime.now()
