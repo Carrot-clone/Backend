@@ -27,6 +27,15 @@ Ohters : <br>
 <br>
 
 
+## 📌 <strong>ERD</strong>
+---
+<br>
+ <img width="898" alt="스크린샷 2022-12-14 오후 4 43 16" src="https://user-images.githubusercontent.com/94242504/207535669-16dbd499-02be-4475-9cb8-76e4de0b2e9c.png">
+
+<br>
+<br>
+
+
 ## 🗿 <strong>Role</strong>
 ---
  - **기본 Api 기능 구현**
