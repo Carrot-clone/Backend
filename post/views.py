@@ -165,7 +165,7 @@ class PostDetailView(APIView):
             )
         return Response(
             {"msg": "게시글 삭제 실패 (작성유저와 삭제유저 불일치)"},
-            status=status.HTTP_400_BAD_REQUEST,
+            status=status.HTTP_401_UNAUTHORIZED,
         )
 
 
@@ -184,3 +184,15 @@ class PostLikeView(APIView):
             post.likeNumber += 1
             post.save()
         return Response({"msg": "성공"}, status=status.HTTP_204_NO_CONTENT)
+
+class PostImageUpdateView(APIView):
+    '''
+    A view for a function of updating images
+    '''
+    def delete(self, request, pk):
+        post = get_object_or_404(PostModel,pk=pk)
+        if request.user == post.userId:
+            for img in request.data.get('img'):
+                PostImage.objects.get(image=f"postImage/{pk}/{img}").delete()
+            return Response({"msg":"성공"}, status=status.HTTP_200_OK)
+        return Response({"msg":"유저 불일치"}, status=status.HTTP_401_UNAUTHORIZED)
