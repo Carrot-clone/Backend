@@ -1,28 +1,9 @@
 import json
 from rest_framework.test import APIClient, APITestCase
 from user.models import UserModel
+from django.core.files.uploadedfile import SimpleUploadedFile
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 
-# 게시글 더미 생성 및 체크
-def making_and_checking_dummy_post(url, token, response):
-    ''' 
-    making a dummy post and checking a post exists
-    '''
-    http_author = f"Bearer {token}"
-    res = response.client.post(
-        url,
-        json.dumps(
-            {
-                "title": "This is test title",
-                "content": "Test content",
-                "price": 50000,
-                "category": "test",
-                "image": "2.png",
-            }
-        ),
-        content_type="application/json",
-        HTTP_AUTHORIZATION=http_author,
-    )
-    assert res.status_code == 201
 
 
 class ClientRequest:
@@ -32,19 +13,45 @@ class ClientRequest:
     def __init__(self, client):
         self.client = client
 
-    def __call__(self, method, url, data=None):
-        content_type = "application/json"
+    def __call__(self, method, url, data=None, files=None ,content_type="application/json"):
 
         if method == "get":
             res = self.client.get(url, {}, content_type=content_type)
         elif method == "post":
-            res = self.client.post(url, json.dumps(data), content_type=content_type)
+            res = self.client.post(url, data, files, content_type=content_type)
         elif method == "delete":
             res = self.client.delete(url, {}, content_type=content_type)
         else:
-            res = self.client.put(url, json.dumps(data), content_type=content_type)
+            res = self.client.put(url, data, files, content_type=content_type)
         return res
 
+# 게시글 더미 생성 및 체크
+def making_and_checking_dummy_post(token, test):
+    ''' 
+    making a dummy post and checking a post exists
+    '''
+    image = SimpleUploadedFile(
+        name="3.png",
+        content=open("tests/3.png",'rb').read(),
+        content_type="image/png"
+    )
+    url = '/api/post'
+    http_author = f"Bearer {token}"
+    fields_data = {
+        'title' : 'test',
+        'content' : 'test',
+        'price' : '777',
+        'category' : 'hot',
+        'image' : ("3.png",image,"image/png"),
+        }
+    data = MultipartEncoder(fields_data)
+    res = test.client.post(
+        url,
+        data=data.to_string(),
+        content_type=data.content_type,
+        HTTP_AUTHORIZATION=http_author,
+    )
+    assert res.status_code == 201
 
 class TestView(APITestCase):
     '''
@@ -62,7 +69,7 @@ class TestView(APITestCase):
         self.user = UserModel.objects.create_user(
             username="test",
             email="test@test.com",
-            profilePhoto="url",
+            profilePhoto="2.png",
             password=self.password,
         )
         self.user.set_password(self.password)
@@ -76,28 +83,19 @@ class TestView(APITestCase):
         )
         self.token = res.data["accessToken"]
 
-    # 메인 페이지 리스트 조회 (글 없음)
-    def test_post_get_list_none(self):
-        '''
-        Checking a function of the pagination (Before setting data)
-        '''
-        url = "/api/post/list/?page=1"
-        http_author = f"Bearer {self.token}"
-        res = self.client.get(
-            url, {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
-        )
-        assert res.status_code == 200
-        assert res.data["results"] == []
-
     # 페이지 제작 및 좋아요
     def test_post_make(self):
         '''
         Checking a function of create
         '''
-        url = "/api/post/"
-        making_and_checking_dummy_post(url, self.token, self)
-        url_heart = "/api/post/6/heart/"
+        making_and_checking_dummy_post(self.token, self)
         http_author = f"Bearer {self.token}"
+        url_get = "/api/post/list/?page=1"
+        res_get = self.client.get(
+            url_get, {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
+        )
+        post_id = res_get.data["results"][0]["postId"]
+        url_heart = f"/api/post/{post_id}/heart/"
         res = self.client.post(
             url_heart, {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
         )
@@ -109,8 +107,7 @@ class TestView(APITestCase):
         '''
         Checking a function of read
         '''
-        url = "/api/post/"
-        making_and_checking_dummy_post(url, self.token, self)
+        making_and_checking_dummy_post(self.token, self)
         url_get = "/api/post/3/"
         http_author = f"Bearer {self.token}"
         res = self.client.get(
@@ -123,22 +120,30 @@ class TestView(APITestCase):
         '''
         Checking a function of update
         '''
-        url = "/api/post/"
-        making_and_checking_dummy_post(url, self.token, self)
+        making_and_checking_dummy_post(self.token, self)
+
         url_put = "/api/post/7/"
         http_author = f"Bearer {self.token}"
+
+        image = SimpleUploadedFile(
+        name="2.png",
+        content=open("tests/2.png",'rb').read(),
+        content_type="image/png"
+        )
+
+        fields_data = {
+            'title' : 'test',
+            'content' : 'UPDATED',
+            'price' : '777',
+            'category' : 'hot',
+            'image' : ("2.png",image,"image/png"),
+            }
+        data = MultipartEncoder(fields_data)
+
         res_put = self.client.put(
             url_put,
-            json.dumps(
-                {
-                    "title": "This is modified title",
-                    "content": "UPDATED",
-                    "price": 50000,
-                    "category": "test",
-                    "image": "2.png",
-                }
-            ),
-            content_type="application/json",
+            data=data.to_string(),
+            content_type=data.content_type,
             HTTP_AUTHORIZATION=http_author,
         )
         res_get = self.client.get(
@@ -152,8 +157,7 @@ class TestView(APITestCase):
         '''
         Checking a function of getting paginated lists
         '''
-        url_post = "/api/post/"
-        making_and_checking_dummy_post(url_post, self.token, self)
+        making_and_checking_dummy_post(self.token, self)
         http_author = f"Bearer {self.token}"
 
         url = "/api/post/list/?page=1"
@@ -168,11 +172,10 @@ class TestView(APITestCase):
         '''
         Checking a function of categorized search
         '''
-        url_post = "/api/post/"
-        making_and_checking_dummy_post(url_post, self.token, self)
+        making_and_checking_dummy_post(self.token, self)
         http_author = f"Bearer {self.token}"
 
-        url = "/api/post/category/list/?page=1&category=test"
+        url = "/api/post/category/list/?page=1&category=hot"
         res_get = self.client.get(
             url, {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
         )
@@ -184,8 +187,7 @@ class TestView(APITestCase):
         '''
         Checking a function of search in title
         '''
-        url_post = "/api/post/"
-        making_and_checking_dummy_post(url_post, self.token, self)
+        making_and_checking_dummy_post(self.token, self)
         http_author = f"Bearer {self.token}"
 
         url = "/api/post/list/?page=1&search=test"
@@ -200,10 +202,14 @@ class TestView(APITestCase):
         '''
         Checking a function of delete
         '''
-        url = "/api/post/"
-        making_and_checking_dummy_post(url, self.token, self)
-        url_delete = "/api/post/1/"
+        making_and_checking_dummy_post(self.token, self)
+        url_get = "/api/post/list/?page=1"
         http_author = f"Bearer {self.token}"
+        res_get = self.client.get(
+            url_get, {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
+        )
+        post_id = res_get.data["results"][0]["postId"]
+        url_delete = f"/api/post/{post_id}/"
         res = self.client.delete(
             url_delete,
             {},
