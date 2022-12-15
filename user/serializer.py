@@ -34,7 +34,7 @@ class UserSignupSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         email = attrs.get("email", None)
         if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError({"msg": "이미 존재하는 이메일입니다.", "status": 200})
+            raise serializers.ValidationError({"msg": "이미 존재하는 이메일입니다."})
         return attrs
 
 
@@ -52,7 +52,7 @@ class UserCheckSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         email = attrs.get("email", None)
         if User.objects.filter(email=email).exists():
-            raise serializers.ValidationError({"msg": "이미 존재하는 이메일입니다.", "status": 200})
+            raise serializers.ValidationError({"msg": "이미 존재하는 이메일입니다."})
         return attrs
 
 

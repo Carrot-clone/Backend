@@ -60,8 +60,10 @@ class PostSerializer(serializers.ModelSerializer):
         '''
         Creating post with mapping and seperating images
         '''
-        instance = PostModel.objects.create(**validated_data)
         image_set = self.context["request"].FILES
+        if len(image_set) == 0:
+            raise serializers.ValidationError({"msg": "이미지가 없습니다"})
+        instance = PostModel.objects.create(**validated_data)
         for image_data in image_set.getlist("image"):
             PostImage.objects.create(post_id=instance, image=image_data)
         return instance
@@ -70,12 +72,14 @@ class PostSerializer(serializers.ModelSerializer):
         '''
         Updating post with new images
         '''
+        image_set = self.context["request"].FILES
+        if len(image_set) == 0:
+            raise serializers.ValidationError({"msg": "이미지가 없습니다"})
         instance.category = validated_data.get("category", instance.category)
         instance.price = validated_data.get("price", instance.price)
         instance.title = validated_data.get("title", instance.title)
         instance.content = validated_data.get("content", instance.content)
         instance.save()
-        image_set = self.context["request"].FILES
         PostImage.objects.filter(post_id=instance).delete()
         for image_data in image_set.getlist("image"):
             PostImage.objects.create(post_id=instance, image=image_data)
@@ -102,5 +106,5 @@ class PostListSerializer(serializers.ModelSerializer):
         image = PostImage.objects.filter(post_id=object)
         try:
             return image[0].image.url
-        except:
+        except IndexError:
             return
