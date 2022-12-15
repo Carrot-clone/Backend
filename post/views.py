@@ -25,8 +25,8 @@ class PostCreateView(APIView):
     A view for creating a post
     '''
     def post(self, request):
-        if 'multipart/form-data' not in request.content_type[:30]:
-            return Response(data={"msg": "Content-type이 일치하지 않습니다"}, status=status.HTTP_400_BAD_REQUEST)
+        # if 'multipart/form-data' not in request.content_type[:30]:
+        #     return Response(data={"msg": "Content-type이 일치하지 않습니다"}, status=status.HTTP_400_BAD_REQUEST)
         serializer = PostSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             serializer.save(userId=request.user)
@@ -35,7 +35,7 @@ class PostCreateView(APIView):
                 status=status.HTTP_201_CREATED,
             )
         return Response(
-            data={"msg": "게시글 작성에 실패하셨습니다."},
+            data={"msg" : "게시글 작성에 실패하셨습니다."},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
