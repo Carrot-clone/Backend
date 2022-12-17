@@ -191,7 +191,7 @@ class PostImageUpdateView(APIView):
     '''
     def delete(self, request, pk, img):
         post = get_object_or_404(PostModel, pk=pk)
-        if request.user != post.postId:
+        if request.user != post.userId:
             return Response({"msg":"유저 불일치"}, status=status.HTTP_401_UNAUTHORIZED)
         PostImage.objects.get(image=f"postImage/{pk}/{img}").delete()
         return Response({"msg":"성공"}, status=status.HTTP_200_OK)
