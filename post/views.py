@@ -143,7 +143,7 @@ class PostDetailView(APIView):
                     {"msg": "게시글 수정 성공"},
                     status=status.HTTP_202_ACCEPTED,
                 )
-            return Response({"msg": "게시글 수정 실패"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"msg": "게시글 수정 실패"}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(
                 {"msg": "게시글 수정 실패(작성유저와 수정유저가 불일치)"},
@@ -189,10 +189,9 @@ class PostImageUpdateView(APIView):
     '''
     A view for a function of updating images
     '''
-    def delete(self, request, pk):
-        post = get_object_or_404(PostModel,pk=pk)
-        if request.user == post.userId:
-            for img in request.data.get('img'):
-                PostImage.objects.get(image=f"postImage/{pk}/{img}").delete()
-            return Response({"msg":"성공"}, status=status.HTTP_200_OK)
-        return Response({"msg":"유저 불일치"}, status=status.HTTP_401_UNAUTHORIZED)
+    def delete(self, request, pk, img):
+        post = get_object_or_404(PostModel, pk=pk)
+        if request.user != post.postId:
+            return Response({"msg":"유저 불일치"}, status=status.HTTP_401_UNAUTHORIZED)
+        PostImage.objects.get(image=f"postImage/{pk}/{img}").delete()
+        return Response({"msg":"성공"}, status=status.HTTP_200_OK)

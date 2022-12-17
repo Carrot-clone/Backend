@@ -18,8 +18,8 @@ urlpatterns = [
     re_path("category/", PostCategoryView.as_view()),
     path("<int:pk>", PostDetailView.as_view()),
     path("<int:pk>/", PostDetailView.as_view()),
-    path("<int:pk>/img", PostImageUpdateView.as_view()),
-    path("<int:pk>/img/", PostImageUpdateView.as_view()),
+    path("<int:pk>/<str:img>", PostImageUpdateView.as_view()),
+    path("<int:pk>/<str:img>/", PostImageUpdateView.as_view()),
     path("<int:pk>/heart", PostLikeView.as_view()),
     path("<int:pk>/heart/", PostLikeView.as_view()),
 ]

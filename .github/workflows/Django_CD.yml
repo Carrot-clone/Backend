@@ -1,23 +1,16 @@
-name: Django CI
+name: Django CD
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "develop" ]
+
+env:
+  S3_BUCKET_NAME: melon-market-bucket
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    env:
-      DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      RDS_NAME: ${{ secrets.RDS_NAME }}
-      RDS_PWD: ${{ secrets.RDS_PWD }}
-      RDS_HOST: ${{ secrets.RDS_HOST }}
-      RDS_USER: ${{ secrets.RDS_USER }}
     strategy:
       max-parallel: 4
       matrix:
