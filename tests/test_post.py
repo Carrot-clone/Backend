@@ -121,20 +121,20 @@ class TestView(APITestCase):
         Checking a function of update
         '''
         making_and_checking_dummy_post(self.token, self)
-
-        url_put = "/api/post/7/"
-        url_img_del = "/api/post/7/img"
         http_author = f"Bearer {self.token}"
 
-
+        url_put = "/api/post/7/"
         res_get = self.client.get(
             "/api/post/list/?page=1", {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
         )
 
         img_name = res_get.data['results'][0]['thumbImage'][72:]
+        url_img_del = f"/api/post/7/{img_name}"
+
+
         res_image = self.client.delete(
             url_img_del,
-            data=json.dumps({"img":[img_name]}),
+            {},
             content_type="application/json",
             HTTP_AUTHORIZATION=http_author,
         )
