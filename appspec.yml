@@ -2,10 +2,10 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/django
+    destination: /home/ubuntu/django/Backend/
     overwrite: yes
 permissions:
-  - object: /home/ubuntu/django
+  - object: /home/ubuntu/django/Backend/
     pattern: "**"
     owner: ubuntu
     group: ubuntu
