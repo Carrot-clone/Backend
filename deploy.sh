@@ -1,14 +1,9 @@
 #!/bin/bash
 
-REPOSITORY=/home/ubuntu/django
+REPOSITORY=/home/ubuntu/django/Backend
 cd $REPOSITORY
 
-# rm -rf /Backend
+source /home/ubuntu/django/venv/bin/activate
 
-# source venv/bin/activate
-
-# cd Backend
-# python3 manage.py makemigrations post user
-
-# sudo systemctl restart gunicorn
-# sudo systemctl restart nginx
+sudo systemctl restart gunicorn
+sudo systemctl restart nginx
