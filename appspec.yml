@@ -5,7 +5,6 @@ files:
     destination: /home/ubuntu/django/Backend/
     overwrite: yes
 file_exists_behavior: OVERWRITE
-
 permissions:
   - object: /home/ubuntu/django/Backend/
     pattern: "**"
