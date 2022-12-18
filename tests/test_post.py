@@ -20,7 +20,7 @@ class ClientRequest:
         elif method == "post":
             res = self.client.post(url, data, files, content_type=content_type)
         elif method == "delete":
-            res = self.client.delete(url, {}, content_type=content_type)
+            res = self.client.delete(url, data, content_type=content_type)
         else:
             res = self.client.put(url, data, files, content_type=content_type)
         return res
@@ -121,9 +121,24 @@ class TestView(APITestCase):
         Checking a function of update
         '''
         making_and_checking_dummy_post(self.token, self)
+        http_author = f"Bearer {self.token}"
 
         url_put = "/api/post/7/"
-        http_author = f"Bearer {self.token}"
+        res_get = self.client.get(
+            "/api/post/list/?page=1", {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
+        )
+
+        img_name = res_get.data['results'][0]['thumbImage'][72:]
+        url_img_del = f"/api/post/7/{img_name}"
+
+
+        res_image = self.client.delete(
+            url_img_del,
+            {},
+            content_type="application/json",
+            HTTP_AUTHORIZATION=http_author,
+        )
+        assert res_image.status_code == 200
 
         image = SimpleUploadedFile(
         name="2.png",
@@ -150,7 +165,7 @@ class TestView(APITestCase):
             url_put, {}, content_type="application/json", HTTP_AUTHORIZATION=http_author
         )
         assert res_put.status_code == 202
-        assert res_get.data["mainPost"]["content"] == "UPDATED"
+        assert res_get.data['mainPost']['content'] == 'UPDATED'
 
     # 메인 페이지 리스트 조회 (글 있음)
     def test_post_get_list_exist(self):

@@ -60,8 +60,8 @@ Ohters : <br>
 
  - **CI/CD**
     - Pytest, Coverage : Unit 단위의 Test Code 작성 후 Coverage 확인
-    - Github Actions (CI) : develop branch에 Pull-Request시 Test Code 및 Coverage 확인
-    - Github Actions (CD) : Elasticbeanstalk 사용 예정
+    - Github Actions (CI) : develop branch에 Pull-Request시 Test Code 및 Coverage 테스트
+    - Github Actions (CD) : 테스트를 마친 코드들은 S3에 저장 후 Code Deploy를 통해 EC2에 서버 배포
 
 <br>
 <br>

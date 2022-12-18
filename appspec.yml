@@ -1,0 +1,16 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/django
+    overwrite: yes
+permissions:
+  - object: /home/ubuntu/django
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
+hooks:
+  AfterInstall:
+  - location: deploy.sh
+    time: 120
+    runas: root
