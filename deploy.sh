@@ -3,6 +3,8 @@
 REPOSITORY=/home/ubuntu/django
 cd $REPOSITORY
 
+ls
+
 # rm -rf /Backend
 
 # source venv/bin/activate
