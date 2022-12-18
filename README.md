@@ -30,7 +30,7 @@ Ohters : <br>
 ## 📌 <strong>ERD</strong>
 ---
 <br>
- <img width="898" alt="스크린샷 2022-12-14 오후 4 43 16" src="https://user-images.githubusercontent.com/94242504/207535669-16dbd499-02be-4475-9cb8-76e4de0b2e9c.png">
+ <img width="604" alt="스크린샷 2022-12-18 오전 12 58 00" src="https://user-images.githubusercontent.com/94242504/208285846-fbddcda5-44e5-4141-9775-08f1b2c1a9ca.png">
 
 <br>
 <br>
