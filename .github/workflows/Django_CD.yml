@@ -6,7 +6,6 @@ on:
 
 env:
   S3_BUCKET_NAME: melon-market-bucket
-  RESOURCE_PATH: ./src/main/resources/application.yaml
   CODE_DEPLOY_APPLICATION_NAME: melon
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: melon_server
 
@@ -18,13 +17,6 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v3
-
-    - name: Set yaml
-      uses: microsoft/variable-substitution@v1
-      with:
-        files: ${{ env.RESOURCE_PATH }}
-      env:
-        override.value: 'from Django_CD.yaml'
 
     - name: Make zip files
       run: zip -r ./$GITHUB_SHA.zip .
