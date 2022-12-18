@@ -6,28 +6,30 @@ on:
 
 env:
   S3_BUCKET_NAME: melon-market-bucket
+  RESOURCE_PATH: ./src/main/resources/application.yaml
+  CODE_DEPLOY_APPLICATION_NAME: melon
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: melon_server
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.8]
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+    - name: checkout
+      uses: actions/checkout@v3
+
+    - name: Set yaml
+      uses: microsoft/variable-substitution@v1
       with:
-        python-version: ${{ matrix.python-version }}
+        files: ${{ env.RESOURCE_PATH }}
+      env:
+        override.value: 'from Django_CD.yaml'
 
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
+    - name: Make zip files
+      run: zip -r ./$GITHUB_SHA.zip .
+      shell: bash
+    
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -35,14 +37,13 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-northeast-2
 
-    - name: Run test and coverage
+    - name: Upload to S3
+      run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip
+
+    - name: Code Deploy
       run: |
-        coverage run --source=./ -m pytest
-    
-    - name: Publish code coverage
-      uses: paambaati/codeclimate-action@v3.0.0
-      with:
-        coverageCommand: coverage xml
-        coverageLocations: ${{github.workspace}}/coverage.xml:coverage.py
-      env:
-        CC_TEST_REPORTER_ID: 0d923aab5913acb3cf22f3b438a407331f8a6af376397b754b624e1e41620beb
+        aws deploy create-deployment \
+        --deployment-config-name CodeDeployDefault.AllAtOnce \
+        --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+        --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
+        --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$GITHUB_SHA.zip
